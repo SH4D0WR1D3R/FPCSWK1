@@ -59,7 +59,8 @@ eval (Sub f) x = x - f
 -- 3
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- If the cell is not enabled, then we can just return the value passed in
+-- If the cell is enabled, we can add the current value to the value passed in based on using eval with the function passed in
 ---------------------------------------
 apply :: Cell -> Int -> Int 
 apply (MkCell False _) n = n
@@ -75,10 +76,12 @@ apply (MkCell True f) n = eval f n
 -- 4
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- Runs through the cell list. If empty, return 0
+-- Else, run through the list, and apply the cell value to the accumulator function
 ---------------------------------------
 result :: [Cell] -> Int 
-result = undefined 
+result [] = 0
+result xs = foldr (\x acc -> apply x acc) 0 xs
 
 -- | `states` @cell@ is a function which returns a list with _exactly_ two
 -- elements that represent the two different states @cell@ can be in. For
