@@ -42,10 +42,12 @@ data Direction = L | R
 -- 2
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- If the Action value is Add x, then we need to add x to the other value passed into eval as an argument
+-- If the Action value is Sub x, then we need to sub x from the other value passed into eval as an argument
 ---------------------------------------
 eval :: Action -> Int -> Int 
-eval = undefined
+eval (Add f) x = f + x
+eval (Sub f) x = x - f
 
 -- | `apply` @cell total@ applies the action of @cell@ to the running @total@ 
 -- if @cell@ is enabled. For example:
@@ -60,7 +62,8 @@ eval = undefined
 -- [Add your explanation of how your implementation works here]
 ---------------------------------------
 apply :: Cell -> Int -> Int 
-apply = undefined
+apply (MkCell False _) n = n
+apply (MkCell True f) n = eval f n
 
 -- | `result` @cells@ calculates the total produced by the actions of all 
 -- enabled cells in @cells@ starting from 0. For example:
