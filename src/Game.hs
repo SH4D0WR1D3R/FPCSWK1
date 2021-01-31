@@ -91,10 +91,10 @@ result xs = foldr (\x acc -> apply x acc) 0 xs
 -- [MkCell True (Add 5), MkCell False (Add 5)]
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- There are only two states, True and False. Both instances of this cell can be added to the list by taking the cell as an argument and adding both instances to the list
 ---------------------------------------
 states :: Cell -> [Cell]
-states = undefined
+states (MkCell _ f) = [MkCell True f, MkCell False f] 
 
 -- | `candidates` @cells@ is a function which, given a list of cells in a row,
 -- produces all possible combinations of states for those cells. For example:
