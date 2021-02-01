@@ -107,10 +107,12 @@ states (MkCell _ f) = [MkCell True f, MkCell False f]
 -- ]
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- Here, the base case is the empty list. We run through the states of x - the head of the function - and for each state, we call the candidates function recursively until we reach the base case,
+-- where we then move on to the next state for x. 
 ---------------------------------------
 candidates :: [Cell] -> [[Cell]]
-candidates = undefined
+candidates [] = [[]]
+candidates (x:xs) = [y:ys | y <- states x, ys <- candidates(xs)]
 
 -- | `solveRow` @row@ finds solutions for @row@. For example:
 --
