@@ -110,7 +110,10 @@ states (MkCell _ f) = [MkCell True f, MkCell False f]
 -- [Add your explanation of how your implementation works here]
 ---------------------------------------
 candidates :: [Cell] -> [[Cell]]
-candidates = undefined
+candidates [] = [[]]
+--candidates xs = [y | y <- states x]
+--candidates xs = [x:ys | a <- xs, x <- states a, ys <- candidates(tail xs)]
+candidates (x:xs) = [y:ys | y <- states x, ys <- candidates(tail xs)]
 
 -- | `solveRow` @row@ finds solutions for @row@. For example:
 --
