@@ -112,7 +112,7 @@ states (MkCell _ f) = [MkCell True f, MkCell False f]
 ---------------------------------------
 candidates :: [Cell] -> [[Cell]]
 candidates [] = [[]]
-candidates (x:xs) = [y:ys | y <- states x, ys <- candidates(xs)]
+candidates (x:xs) = [y:ys | y <- states x, ys <- candidates xs]
 
 -- | `solveRow` @row@ finds solutions for @row@. For example:
 --
@@ -140,12 +140,36 @@ solveRow (MkRow n xs) = [MkRow n y | y <- candidates xs, result y == n]
 --                , MkRow 4 [MkCell True (Add 2), MkCell True (Add 2)]
 --                ]
 -- ]
---
+-- getColumns [5, 2] [ MkRow 3 [MkCell True (Add 3), MkCell False (Add 5)], MkRow 4 [MkCell True (Add 2), MkCell True (Add 2)]
 ---------------------------------------
 -- [Add your explanation of how your implementation works here]
 ---------------------------------------
+allRows :: [Row] -> [[Row]] -- solves each row in the list of rows
+allRows xs = [solveRow y | y <- xs]
+
+getCell :: Int -> Row -> Cell -- gets a cell from a row
+getCell n (MkRow _ xs) = xs!! n
+
+getColumn :: Int -> Int -> [Row] -> Row -- gets one column based on a list of rows
+getColumn n c xs = MkRow c [getCell n y | y <- xs] -- n is the column, c is the aim for the total of the column, xs is the row
+
+getColumns :: [Int] -> [Row] -> [Row] -- gets all columns for a list of rows
+getColumns x xs = [getColumn y (x!! y) xs | y <- [0.. (length x) - 1]]
+
+candidateGrids :: [[Row]] -> [[Row]]
+candidateGrids [] = []
+candidateGrids [xs] = [[y] | y <- xs]
+candidateGrids (x:xs) = [z:y | z <- x, y <- candidateGrids xs]
+
+validRow :: Row -> Bool
+validRow (MkRow n xs) = result xs == n
+
+gridCorrect :: Grid -> Bool
+gridCorrect (MkGrid n xs) = and [validRow y | y <- getColumns n xs]
+
 solve :: Grid -> [Grid]
-solve = undefined
+solve (MkGrid [] []) = [MkGrid [] []]
+solve (MkGrid n xs) = [MkGrid n y | y <- candidateGrids (allRows xs), gridCorrect (MkGrid n y)]
 
 -- | `rotate` @direction list@ rotates the items in @list@ to the left or
 -- right depending on the value of @direction@. For example:
