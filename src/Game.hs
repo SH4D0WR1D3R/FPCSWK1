@@ -125,10 +125,11 @@ candidates (x:xs) = [y:ys | y <- states x, ys <- candidates(xs)]
 -- ]
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- This takes a row and outputs a list of rows with different states for each cell. Each row output is a different solution for the row. We apply candidates to the [Cell] to find all possible combinations
+-- of states. We then run through this result of the candidates function application, and apply result to each element of the list. If this result equals n, then we add it to the final output of the function
 ---------------------------------------
 solveRow :: Row -> [Row]
-solveRow = undefined
+solveRow (MkRow n xs) = [MkRow n y | y <- candidates xs, result y == n]
 
 -- | `solve` @grid@ finds all solutions for @grid@. For example:
 --
