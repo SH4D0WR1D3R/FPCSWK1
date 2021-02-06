@@ -208,7 +208,9 @@ solve (MkGrid n xs) = [MkGrid n y | y <- candidateGrids (allRows xs), gridCorrec
 -- [Add your explanation of how your implementation works here]
 ---------------------------------------
 rotate :: Direction -> [a] -> [a]
-rotate = undefined
+rotate _ [] = []
+rotate L (x:xs) = xs ++ [x]
+rotate R xs = (last xs):(init xs)
 
 -- | `rotations` @grid@ returns a list of grids containing all possible ways 
 -- to rotate @grid@. This means the resulting list should normally have 
