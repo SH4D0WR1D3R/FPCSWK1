@@ -285,7 +285,8 @@ convert (MkGrid [] []) = MkGrid [] []
 convert (MkGrid n xs) = MkGrid (getRowTargets xs) (getColumns n xs)
 
 rotations :: Grid -> [Grid]
-rotations xs = (rotateRows xs) ++ (rotateRows (convert xs))
+--rotations xs = (rotateRows xs) ++ convert (rotateRows (convert xs))
+rotations xs = (rotateRows xs) ++ [convert y | y <- rotateRows (convert xs)]
 
 
 -- | `steps` @grid@ finds the sequence of rotations that lead to a solution 
