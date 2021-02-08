@@ -205,7 +205,9 @@ solve (MkGrid n xs) = [MkGrid n y | y <- candidateGrids (allRows xs), gridCorrec
 -- [1]
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- If empty list, return empty list
+-- If rotating left, left most element should go to end of list
+-- If rotating right, right most element should go to start of list
 ---------------------------------------
 rotate :: Direction -> [a] -> [a]
 rotate _ [] = []
@@ -236,8 +238,55 @@ rotate R xs = (last xs):(init xs)
 ---------------------------------------
 -- [Add your explanation of how your implementation works here]
 ---------------------------------------
+{-rotate' :: Direction -> Row -> Row
+rotate' d (MkRow n xs) = MkRow n (rotate d xs)
+
+allRotate :: [Row] -> [Row]
+allRotate xs = [rotate' L x | x <- xs]
+
+--rotations' :: [Row] -> [Row] -- runs rotations on list of rows/columns and returns a list of a list of rows - essentially a list of various grids that aren't in the grid format
+--rotations' [] = []
+--rotations' [x] = [rotate' L x]
+--rotations' xs = [x:[y] | x <- rotations' xs, y <- xs]
+--rotations' (x:xs) = []
+rotations' :: [Row] -> [[Row]]
+rotations' [] = [[]]
+--rotations' xs = [x:[y] | x <- allRotate xs, y <- (delete x xs)]
+rotations' xs = [(rotate' L x):[y] | x <- xs, y <- (delete x xs)]
+
 rotations :: Grid -> [Grid]
-rotations = undefined
+--rotations (MkGrid [] []) = [MkGrid [] []]
+--rotations (MkGrid n [MkRow x xs]) = [(MkGrid n ((rotate L y):ys)) | y <- xs, ys <- rotations (MkGrid (tail n) (MkRow x (tail xs)))]
+rotations = undefined-}
+
+{-getRows :: Grid -> [Row]
+getRows (MkGrid [] []) = []
+getRows (MkGrid n xs) = xs
+
+rotateRows :: Int -> Grid -> Grid
+rotateRows n g = -}
+rotate' :: Row -> Row
+rotate' (MkRow n xs) = MkRow n (rotate L xs)
+
+rotateGrid :: Int -> Grid -> Grid
+rotateGrid _ (MkGrid [] []) = MkGrid [] []
+rotateGrid _ (MkGrid [x] [y]) = MkGrid [x] [y]
+rotateGrid n (MkGrid x xs) = MkGrid x (fst(splitAt n xs) ++ ((rotate' (xs!! n)):(tail(snd(splitAt n xs)))))
+
+rotateRows :: Grid -> [Grid]
+rotateRows (MkGrid x xs) = [rotateGrid n (MkGrid x xs) | n <- [0..((length xs)-1)]]
+
+getRowTargets :: [Row] -> [Int]
+getRowTargets [] = []
+getRowTargets ((MkRow n _):xs) = n:(getRowTargets xs)
+
+convert :: Grid -> Grid
+convert (MkGrid [] []) = MkGrid [] []
+convert (MkGrid n xs) = MkGrid (getRowTargets xs) (getColumns n xs)
+
+rotations :: Grid -> [Grid]
+rotations xs = (rotateRows xs) ++ (rotateRows (convert xs))
+
 
 -- | `steps` @grid@ finds the sequence of rotations that lead to a solution 
 -- for @grid@ in the fewest number of rotations. The resulting list includes 
