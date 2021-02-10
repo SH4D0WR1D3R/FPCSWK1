@@ -238,33 +238,6 @@ rotate R xs = (last xs):(init xs)
 ---------------------------------------
 -- [Add your explanation of how your implementation works here]
 ---------------------------------------
-{-rotate' :: Direction -> Row -> Row
-rotate' d (MkRow n xs) = MkRow n (rotate d xs)
-
-allRotate :: [Row] -> [Row]
-allRotate xs = [rotate' L x | x <- xs]
-
---rotations' :: [Row] -> [Row] -- runs rotations on list of rows/columns and returns a list of a list of rows - essentially a list of various grids that aren't in the grid format
---rotations' [] = []
---rotations' [x] = [rotate' L x]
---rotations' xs = [x:[y] | x <- rotations' xs, y <- xs]
---rotations' (x:xs) = []
-rotations' :: [Row] -> [[Row]]
-rotations' [] = [[]]
---rotations' xs = [x:[y] | x <- allRotate xs, y <- (delete x xs)]
-rotations' xs = [(rotate' L x):[y] | x <- xs, y <- (delete x xs)]
-
-rotations :: Grid -> [Grid]
---rotations (MkGrid [] []) = [MkGrid [] []]
---rotations (MkGrid n [MkRow x xs]) = [(MkGrid n ((rotate L y):ys)) | y <- xs, ys <- rotations (MkGrid (tail n) (MkRow x (tail xs)))]
-rotations = undefined-}
-
-{-getRows :: Grid -> [Row]
-getRows (MkGrid [] []) = []
-getRows (MkGrid n xs) = xs
-
-rotateRows :: Int -> Grid -> Grid
-rotateRows n g = -}
 rotate' :: Row -> Row
 rotate' (MkRow n xs) = MkRow n (rotate L xs)
 
@@ -285,7 +258,6 @@ convert (MkGrid [] []) = MkGrid [] []
 convert (MkGrid n xs) = MkGrid (getRowTargets xs) (getColumns n xs)
 
 rotations :: Grid -> [Grid]
---rotations xs = (rotateRows xs) ++ convert (rotateRows (convert xs))
 rotations xs = (rotateRows xs) ++ [convert y | y <- rotateRows (convert xs)]
 
 
