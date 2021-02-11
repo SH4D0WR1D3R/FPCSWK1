@@ -282,7 +282,79 @@ rotations xs = (rotateRows xs) ++ [convert y | y <- rotateRows (convert xs)]
 ---------------------------------------
 -- [Add your explanation of how your implementation works here]
 ---------------------------------------
-steps :: Grid -> [Grid]
-steps = undefined
+{-checkGrids :: Grid -> [Grid] -> [Grid]
+checkGrids g xs = [y | y <- xs, y /= g]
 
+solveCheck :: [Grid] -> Bool
+solveCheck xs = and (map (solve xs)) -- if true, no solutions, run steps' on next list in queue and add to queue accordingly
+
+findSolution :: Bool -> Grid
+
+steps' :: [[Grid]] -> Grid -> [Grid] -> Bool -> [Grid]
+steps' queue _ g True = g
+--steps' queue original g _ = solve (checkGrids original (rotations (head g)))
+steps' queue original g _ = [steps' (queue ++ (y:g)) original head(tail queue) solveCheck | y <- checkGrids original (rotations (head g))]
+
+steps :: Grid -> [Grid]
+steps = undefined-}
+
+{-checkGrids :: Grid -> [Grid] -> [Grid] -> [Grid]
+checkGrids g visited xs = [y | y <- xs, z <- visited, y /= g, y /= z]
+
+solveCheck :: [Grid] -> Maybe Grid
+solveCheck [] = Nothing
+solveCheck (x:xs) = if (solve x == []) then (solveCheck xs) else Just x
+
+runRotations :: Grid -> Grid -> [Grid] -> Maybe Grid
+runRotations g original visited = solveCheck (checkGrids original visited (rotations g))
+
+addToQueue :: [[Grid]] -> Grid -> Grid -> [Grid] -> [Grid] -> [[Grid]]
+addToQueue queue g original path visited = queue ++ [path ++ [y]| y <- checkGrids original visited (rotations g)]
+
+steps' :: [[Grid]] -> [Grid] -> Grid -> Maybe Grid -> [Grid] -> [Grid]
+steps' [[]] _ g _ visited = steps' (addToQueue [[]] g g []) [] g (runRotations g g) visited
+steps' [[]] [] _ _ _ = []
+steps' _ path _ (Just g) _ = g:path
+steps' (q:qs) _ original Nothing visited = steps' (addToQueue qs (head q) original q) q original (runRotations (head q) original) (visited ++ (checkGrids(rotations (head q)) visited (head q)))
+
+steps :: Grid -> [Grid]
+steps g = steps' [[]] [] g Nothing []-}
+
+{-checkGrids :: [Grid] -> [Grid] -> [Grid]
+checkGrids [] xs = xs
+checkGrids visited xs = [y | y <- xs, z <- visited, y /= z]
+
+solveCheck :: [Grid] -> Maybe Grid
+solveCheck [] = Nothing
+solveCheck (x:xs) = if (solve x == []) then (solveCheck xs) else Just x
+
+addToQueue :: [[Grid]] -> [Grid] -> Grid -> [Grid] -> [[Grid]]
+addToQueue _ [] _ _ = [[]]
+addToQueue _ path xs [] = [y:path | y <- rotations xs]
+addToQueue [[]] path xs visited = [y:path | y <- (checkGrids visited (rotations xs))]
+addToQueue queue path xs visited = queue ++ [y:path | y <- (checkGrids visited (rotations xs))]
+
+steps' :: [[Grid]] -> [Grid] -> [Grid] -> Maybe Grid -> Bool -> [Grid]
+steps' [[]] [v] _ Nothing True = steps' (addToQueue [] [] v [v]) [v] [] Nothing False
+steps' [[]] [] [] _ False = []
+steps' _ _ path (Just g) _ = g:path
+steps' (q:qs) visited _ Nothing _ = steps' (addToQueue qs q (head q) visited) (visited ++ (checkGrids visited (rotations (head q)))) q (solveCheck (checkGrids visited (rotations (head q)))) False
+
+steps :: Grid -> [Grid]
+steps g = steps' [[]] [g] [] Nothing True-}
+
+checkGrids :: Grid -> [Grid] -> [Grid]
+checkGrids _ [] = []
+checkGrids g visited = [y | y <- rotations g, z <- visited, y /= z]
+
+--checkSolution :: [Grid] -> Bool
+--checkSolution
+
+steps' :: [[Grid]] -> [Grid] -> [Grid]
+steps' queue visited
+    | not (null (concat (map solve (rotations (head (head queue)))))) =  (head (head (filter (not.null) (map solve (rotations (head (head queue))))))):(head queue)
+    | otherwise = steps' (tail (queue ++ [r:(head queue) | r <- rotations (head (head queue))])) visited
+
+steps :: Grid -> [Grid]
+steps g = drop 1 (reverse (steps' [[g]] [g]))
 --------------------------------------------------------------------------------
