@@ -3,15 +3,15 @@
 -- Coursework 1: Large Arithmetic Collider                                    --
 --------------------------------------------------------------------------------
 
-module Game where 
+module Game where
 
 --------------------------------------------------------------------------------
 
 -- | Represents different actions (including their parameters) that a cell can 
 -- have on a row or column total.
-data Action 
-    = Add Int 
-    | Sub Int 
+data Action
+    = Add Int
+    | Sub Int
     deriving (Eq, Ord, Show)
 
 -- | Represents a cell including whether it is enabled and its action.
@@ -45,7 +45,7 @@ data Direction = L | R
 -- If the Action value is Add x, then we need to add x to the other value passed into eval as an argument
 -- If the Action value is Sub x, then we need to sub x from the other value passed into eval as an argument
 ---------------------------------------
-eval :: Action -> Int -> Int 
+eval :: Action -> Int -> Int
 eval (Add f) x = f + x
 eval (Sub f) x = x - f
 
@@ -62,7 +62,7 @@ eval (Sub f) x = x - f
 -- If the cell is not enabled, then we can just return the value passed in
 -- If the cell is enabled, we can add the current value to the value passed in based on using eval with the function passed in
 ---------------------------------------
-apply :: Cell -> Int -> Int 
+apply :: Cell -> Int -> Int
 apply (MkCell False _) n = n
 apply (MkCell True f) n = eval f n
 
@@ -79,7 +79,7 @@ apply (MkCell True f) n = eval f n
 -- Runs through the cell list. If empty, return 0
 -- Else, run through the list, and apply the cell value to the accumulator function
 ---------------------------------------
-result :: [Cell] -> Int 
+result :: [Cell] -> Int
 result [] = 0
 result xs = foldr (\x acc -> apply x acc) 0 xs
 
@@ -94,7 +94,7 @@ result xs = foldr (\x acc -> apply x acc) 0 xs
 -- There are only two states, True and False. Both instances of this cell can be added to the list by taking the cell as an argument and adding both instances to the list
 ---------------------------------------
 states :: Cell -> [Cell]
-states (MkCell _ f) = [MkCell True f, MkCell False f] 
+states (MkCell _ f) = [MkCell True f, MkCell False f]
 
 -- | `candidates` @cells@ is a function which, given a list of cells in a row,
 -- produces all possible combinations of states for those cells. For example:
@@ -280,7 +280,14 @@ rotations xs = (rotateRows xs) ++ [convert y | y <- rotateRows (convert xs)]
 -- ]
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- This function implements breadth first search to complete the aim. steps calls steps' which is defined to take more arguments to work with
+-- steps' takes a queue which holds the paths to all nodes visited. This is a list of list of grids. E.g.
+-- Let's say we start with a grid, 1. Running rotations on it would generate 3 other grids, 2, 3 and 4. The queue would now be [[2], [3], [4]]. For the sake of this example,
+-- no rotations from 1 generate a solution.
+-- The function then moves on to the next node in the queue - [2]. Rotations is run on this again. It generates 5, 6, 7. Let's say 5 is the same as 1. 5 is then ignored and 
+-- not added to the queue - this check is done by checkGrids which is run in rotations'. So now the queue is [[2], [3], [4], [2, 6], [2, 7]]
+-- Then rotations is run on [3] as we've moved to the next path in the queue. Let's say it generates a solution - 8. This is checked for in the guard statements of steps'
+-- and the path [3, 8] is output as a result of finding a solution
 ---------------------------------------
 checkGrids :: Grid -> [Grid] -> [Grid]
 checkGrids _ [] = []
@@ -291,8 +298,8 @@ rotations' g = checkGrids (head (head g))
 
 steps' :: [[Grid]] -> [Grid] -> [Grid]
 steps' queue visited
-    | not (null (concatMap solve (rotations' queue visited))) = (head (head (filter (not.null) (map solve (rotations' queue visited))))):(head queue)
-    | otherwise = steps' (tail (queue ++ [r:(head queue) | r <- rotations' queue visited])) visited
+    | not (null (concatMap solve (rotations' queue visited))) = head (head (filter (not.null) (map solve (rotations' queue visited)))):head queue
+    | otherwise = steps' (tail (queue ++ [r:head queue | r <- rotations' queue visited])) visited
 
 steps :: Grid -> [Grid]
 steps g = drop 1 (reverse (steps' [[g]] [g]))
