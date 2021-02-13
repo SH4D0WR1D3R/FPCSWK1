@@ -236,7 +236,12 @@ rotate R xs = (last xs):(init xs)
 -- ]
 --
 ---------------------------------------
--- [Add your explanation of how your implementation works here]
+-- rotations as a function calls the same method on the columns and rows, but converts the columns so they are demonstrated in the correct format as well
+-- convert makes sure the grid is displayed according to rows rather than columns
+-- rotateRows is used to run through each of the rows and rotate them once, generating a new grid each time based on the original grid
+-- It calls rotateGrid which splits the rows at a specific index and inserts the rotated row. 
+-- rotate' is a helper function which makes it easier when working with rows, since rotate as a function only accepts lists of cells
+
 ---------------------------------------
 rotate' :: Row -> Row
 rotate' (MkRow n xs) = MkRow n (rotate L xs)
