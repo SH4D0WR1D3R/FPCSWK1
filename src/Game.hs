@@ -286,10 +286,13 @@ checkGrids :: Grid -> [Grid] -> [Grid]
 checkGrids _ [] = []
 checkGrids g visited = [y | y <- rotations g, z <- visited, y /= z]
 
+rotations' :: [[Grid]] -> [Grid] -> [Grid]
+rotations' g = checkGrids (head (head g))
+
 steps' :: [[Grid]] -> [Grid] -> [Grid]
 steps' queue visited
-    | not (null (concat (map solve (rotations (head (head queue)))))) =  (head (head (filter (not.null) (map solve (rotations (head (head queue))))))):(head queue)
-    | otherwise = steps' (tail (queue ++ [r:(head queue) | r <- rotations (head (head queue))])) visited
+    | not (null (concatMap solve (rotations' queue visited))) = (head (head (filter (not.null) (map solve (rotations' queue visited))))):(head queue)
+    | otherwise = steps' (tail (queue ++ [r:(head queue) | r <- rotations' queue visited])) visited
 
 steps :: Grid -> [Grid]
 steps g = drop 1 (reverse (steps' [[g]] [g]))
